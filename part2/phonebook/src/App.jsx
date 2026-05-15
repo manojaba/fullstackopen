@@ -1,26 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
+import axios from 'axios';
+import phonebookService from './services/phonebook'
 
 
 function App() {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '9486168028' },
-    { name: 'Manoj', number: '9597015689' },
-    { name: 'Ajay', number: '244633' },
-    {
-      name: 'Priya', number: '344233'
-    }
-  ])
-
-
-
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterInput, setFilterInput] = useState('');
 
   const filteredPersons = persons.filter(p => p.name.toLowerCase().includes(filterInput.toLowerCase()))
+
+  useEffect(() => {
+    console.log('effect')
+    phonebookService.getAll()
+    .then(data => {
+      console.log('promise complete',data)
+      setPersons(data)
+      console.log('persons',persons)
+    })
+    
+  },[])
+
+  console.log('render',persons.length,'persons')
 
 
   const addContact = (e) => {
@@ -35,11 +40,30 @@ function App() {
 
       }
 
-      setPersons(persons.concat(newObject))
+      phonebookService.create(newObject)
+      .then(data => {
+        console.log('data',data);
+        setPersons(persons.concat(data))
+       })
+      
+
       setNewName('')
       setNewNumber('')
     }
 
+
+  }
+
+  const handleDelete = (id) => {
+    
+   if(window.confirm('do you want to delete',persons.find(p => p.id))){
+     phonebookService.deleteObject(id).then(data => {
+      console.log('delete data:',data)
+      setPersons(persons.filter(p => p.id !== id  ))
+    })
+   } else {
+    console.log('enda ippadi')
+   }
 
   }
 
@@ -53,7 +77,7 @@ function App() {
       <Filter filterInput={filterInput} setFilterInput={setFilterInput} />
       <PersonForm addContact={addContact} setNewName={setNewName} newName={newName} setNewNumber={setNewNumber} newNumber={newNumber} />
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons}  handleDelete={handleDelete}/>
     </>
   )
 }
