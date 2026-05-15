@@ -32,7 +32,20 @@ function App() {
     e.preventDefault()
     const nameExist = persons.some(p => p.name === newName)
     if (nameExist) {
-      alert(`the name ${newName}already exists, try another name`)
+      if(window.confirm(`the name ${newName} already exist , replace the old number with new one?`)){
+        const newObject = {
+        name: newName,
+        number: newNumber
+
+      }
+        const filteredPerson = persons.find(p => p.name === newName)
+        phonebookService.update(filteredPerson.id,newObject).then(data => {
+ setPersons(persons => persons.map(p => p.id === filteredPerson.id ? data : p))
+        })
+       
+
+        
+      }
     } else {
       const newObject = {
         name: newName,
