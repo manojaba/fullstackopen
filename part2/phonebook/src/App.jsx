@@ -4,6 +4,7 @@ import Filter from './components/Filter';
 import Persons from './components/Persons';
 import axios from 'axios';
 import phonebookService from './services/phonebook'
+import Notifications from './components/Notifications';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterInput, setFilterInput] = useState('');
+  const[errorMessage,setErrorMessage] = useState(null)
 
   const filteredPersons = persons.filter(p => p.name.toLowerCase().includes(filterInput.toLowerCase()))
 
@@ -43,7 +45,10 @@ function App() {
  setPersons(persons => persons.map(p => p.id === filteredPerson.id ? data : p))
         })
        
-
+        setErrorMessage(`Added ${newNumber} to ${newName}`)
+        setTimeout(()=>setErrorMessage(null),2000)
+        setNewName('')
+        setNewNumber('')
         
       }
     } else {
@@ -58,7 +63,8 @@ function App() {
         console.log('data',data);
         setPersons(persons.concat(data))
        })
-      
+       setErrorMessage(`Added ${newName}`)
+       setTimeout(() =>setErrorMessage(null),2000)
 
       setNewName('')
       setNewNumber('')
@@ -86,7 +92,8 @@ function App() {
 
   return (
     <>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+      <Notifications message={errorMessage} />
       <Filter filterInput={filterInput} setFilterInput={setFilterInput} />
       <PersonForm addContact={addContact} setNewName={setNewName} newName={newName} setNewNumber={setNewNumber} newNumber={newNumber} />
       <h2>Numbers</h2>
