@@ -44,6 +44,10 @@ function App() {
         phonebookService.update(filteredPerson.id,newObject).then(data => {
  setPersons(persons => persons.map(p => p.id === filteredPerson.id ? data : p))
         })
+        .catch((error) => {
+          setErrorMessage(`the person ${newName} does not exist in the server`)
+          setPersons(persons.filter(p => p.id !== filteredPerson.id ))
+        })
        
         setErrorMessage(`Added ${newNumber} to ${newName}`)
         setTimeout(()=>setErrorMessage(null),2000)
@@ -85,7 +89,6 @@ function App() {
    }
 
   }
-
 
 
 
