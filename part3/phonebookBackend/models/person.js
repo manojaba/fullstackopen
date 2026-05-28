@@ -1,29 +1,30 @@
-const mongoose = require('mongoose')
 require('dotenv').config()
+const mongoose = require('mongoose')
+
 const url = process.env.MONGODB_URI
 
 mongoose.set('strictQuery',false)
-mongoose.connect(url,{family:4})
-.then(result => console.log('connected to mongoDB'))
-.catch(error => console.log('error connecting to mongoDB',error.message))
+mongoose.connect(url,{ family:4 })
+  .then(() => console.log('connected to mongoDB'))
+  .catch(error => console.log('error connecting to mongoDB',error.message))
 
 const personSchema = new mongoose.Schema({
-    name:{
-      type:String,
-      minLength:3,
-      required:true
-    },
-    number:{
-      type:String,
-      minLength:8,
-      required:true,
-      validate: {
-        validator:function(v){
-          return /^\d{2,3}-\d+$/.test(v)
-        },
-        message:props => `${props.value} is not a valid phone number format`
-      }
-    },
+  name:{
+    type:String,
+    minLength:3,
+    required:true
+  },
+  number:{
+    type:String,
+    minLength:8,
+    required:true,
+    validate: {
+      validator:function(v){
+        return /^\d{2,3}-\d+$/.test(v)
+      },
+      message:props => `${props.value} is not a valid phone number format`
+    }
+  },
 })
 
 personSchema.set('toJSON', {
